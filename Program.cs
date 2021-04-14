@@ -78,6 +78,30 @@ namespace CamParam
                 return;
             }
 
+            // Print current values if no commands.
+            if (commandTable.Count == 0)
+            {
+                // Get CameraControlProperty values.
+                foreach (CameraControlProperty cameraControlProperty in
+                    System.Enum.GetValues(typeof(CameraControlProperty)))
+                {
+                    int value;
+                    CameraControlFlags flags;
+                    cameraControl.Get(cameraControlProperty, out value, out flags);
+                    System.Console.WriteLine(cameraControlProperty.ToString() + "=" + value);
+                }
+
+                // Get VideoProcAmpProperty values.
+                foreach (VideoProcAmpProperty videoProcAmpProperty in
+                    System.Enum.GetValues(typeof(VideoProcAmpProperty)))
+                {
+                    int value;
+                    VideoProcAmpFlags flags;
+                    videoProcAmp.Get(videoProcAmpProperty, out value, out flags);
+                    System.Console.WriteLine(videoProcAmpProperty.ToString() + "=" + value);
+                }
+            }
+
             // Loop through remaining commands.
             foreach (System.Collections.DictionaryEntry command in commandTable)
             {
@@ -86,7 +110,7 @@ namespace CamParam
 
                 System.Console.WriteLine("Setting " + propertyName + " to " + propertyValue);
 
-                // Try property as a CamControlProperty.
+                // Try property as a CameraControlProperty.
                 CameraControlProperty cameraControlProperty;
                 if (System.Enum.TryParse<CameraControlProperty>(propertyName, true, out cameraControlProperty))
                 {
