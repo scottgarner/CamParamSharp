@@ -18,7 +18,7 @@ CamParam.exe
 ```
 // List properties for a device.
 
-CamParam.exe device=0
+CamParam.exe device 0
 
 // Output
 
