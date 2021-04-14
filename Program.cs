@@ -12,7 +12,6 @@ namespace CamParam
             // If there are no arguments, list devices and exit;
             if (args.Length == 0)
             {
-                System.Console.WriteLine("Available devices:");
                 for (int i = 0; i < videoInputDevices.Length; i++)
                 {
                     DsDevice device = videoInputDevices[i];
@@ -24,22 +23,28 @@ namespace CamParam
             // Otherwise convert arguments into a table of commands.
             System.Collections.Hashtable commandTable = new System.Collections.Hashtable();
 
-            foreach (string arg in args)
+            for (int i = 0; i < args.Length; i += 2)
             {
-                if (arg.Contains("="))
+                // Make sure there is a value after the property.
+                if (i + 1 == args.Length)
                 {
-                    string[] keyValuePair = arg.Split("=");
-                    string propertyName = keyValuePair[0];
-                    int propertyValue;
-
-                    if (!System.Int32.TryParse(keyValuePair[1], out propertyValue))
-                    {
-                        System.Console.Error.WriteLine("Property value must be an integer: " + arg);
-                        continue;
-                    }
-
-                    commandTable[propertyName.ToLower()] = propertyValue;
+                    System.Console.Error.WriteLine("Missing value for property: " + args[i]);
+                    break;
                 }
+
+                // Get property and value.
+                string propertyName = args[i];
+                string propertyValueString = args[i + 1];
+                int propertyValue;
+
+                if (!System.Int32.TryParse(propertyValueString, out propertyValue))
+                {
+                    System.Console.Error.WriteLine("Property value must be an integer: " + propertyValueString);
+                    continue;
+                }
+
+                // Add command.
+                commandTable[propertyName] = propertyValue;
             }
 
             // Get device index.
@@ -55,7 +60,6 @@ namespace CamParam
             if (deviceIndex < videoInputDevices.Length)
             {
                 videoInputDevice = videoInputDevices[deviceIndex];
-                System.Console.WriteLine("Configuring Device: " + videoInputDevice.Name);
             }
             else
             {
@@ -88,7 +92,7 @@ namespace CamParam
                     int value;
                     CameraControlFlags flags;
                     cameraControl.Get(cameraControlProperty, out value, out flags);
-                    System.Console.WriteLine(cameraControlProperty.ToString() + "=" + value);
+                    System.Console.WriteLine(cameraControlProperty.ToString() + " " + value);
                 }
 
                 // Get VideoProcAmpProperty values.
@@ -98,7 +102,7 @@ namespace CamParam
                     int value;
                     VideoProcAmpFlags flags;
                     videoProcAmp.Get(videoProcAmpProperty, out value, out flags);
-                    System.Console.WriteLine(videoProcAmpProperty.ToString() + "=" + value);
+                    System.Console.WriteLine(videoProcAmpProperty.ToString() + " " + value);
                 }
             }
 
@@ -108,12 +112,11 @@ namespace CamParam
                 string propertyName = (string)command.Key;
                 int propertyValue = (int)command.Value;
 
-                System.Console.WriteLine("Setting " + propertyName + " to " + propertyValue);
-
                 // Try property as a CameraControlProperty.
                 CameraControlProperty cameraControlProperty;
                 if (System.Enum.TryParse<CameraControlProperty>(propertyName, true, out cameraControlProperty))
                 {
+                    System.Console.WriteLine(cameraControlProperty + " " + propertyValue);
                     int result = cameraControl.Set(cameraControlProperty, propertyValue, CameraControlFlags.Manual);
                     if (result != 0) System.Console.Error.WriteLine("Could not set property.");
                     continue;
@@ -123,6 +126,7 @@ namespace CamParam
                 VideoProcAmpProperty videoProcAmpProperty;
                 if (System.Enum.TryParse<VideoProcAmpProperty>(propertyName, true, out videoProcAmpProperty))
                 {
+                    System.Console.WriteLine(videoProcAmpProperty + " " + propertyValue);
                     int result = videoProcAmp.Set(videoProcAmpProperty, propertyValue, VideoProcAmpFlags.Manual);
                     if (result != 0) System.Console.Error.WriteLine("Could not set property.");
                     continue;
