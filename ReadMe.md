@@ -51,3 +51,8 @@ CamParam.exe device 0 gain 64 exposure -5
 Exposure -5
 Gain 64
 ```
+
+## Acknowledgements
+
+This project uses the [DirectShowLib](https://github.com/larrybeall/DirectShowLib) package, which wraps the original [DirectShowNET Library](http://directshownet.sourceforge.net/).
+
