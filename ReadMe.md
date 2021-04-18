@@ -2,6 +2,8 @@
 
 I was shocked to find no simple way to change basic webcam settings (gain, exposure, etc.) from the command line on Windows. After much time spent looking at existing approaches, I finally gave in and wrote this little program.
 
+A replacement C++ version of this program is [CamParam](https://github.com/scottgarner/CamParam/).
+
 ## Usage
 
 ```
